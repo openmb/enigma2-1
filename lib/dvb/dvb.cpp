@@ -119,6 +119,8 @@ eDVBResourceManager::eDVBResourceManager()
 			m_boxtype = DM800SE;
 		else if (!strncmp(tmp, "dm7020hd\n", rd))
 			m_boxtype = DM7020HD;
+		else if (!strncmp(tmp, "wetekplay\n", rd))
+			m_boxtype = WETEKPLAY;
 		else
 			eDebug("[eDVBResourceManager] boxtype detection via /proc/stb/info not possible. Use fallback via demux count!");
 	}
