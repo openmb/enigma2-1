@@ -63,6 +63,9 @@ class AVSwitch:
 	if about.getChipSetString() in ('7358', '7356', '7362', '7424', '7425', '7241'):
 		modes["HDMI"] = ["720p", "1080p", "1080i", "576p", "576i", "480p", "480i"]
 		widescreen_modes = {"720p", "1080p", "1080i"}
+	elif about.getChipSetString() in ('meson-6'):
+		modes["HDMI"] = ["720p", "1080p", "1080i"]
+		widescreen_modes = {"720p", "1080p", "1080i"}
 	else:
 		modes["HDMI"] = ["720p", "1080i", "576p", "576i", "480p", "480i"]
 		widescreen_modes = {"720p", "1080i"}
@@ -74,12 +77,12 @@ class AVSwitch:
 	# if modes.has_key("DVI-PC") and not getModeList("DVI-PC"):
 	# 	print "remove DVI-PC because of not existing modes"
 	# 	del modes["DVI-PC"]
-	if modes.has_key("YPbPr") and getBoxType() in ('et4x00', 'xp1000', 'tm2t', 'tmsingle', 'odimm7', 'vusolo2', 'tmnano','tmnanose', 'tmnano2super','tmnano3t','iqonios300hd', 'e3hd', 'dm500hdv2', 'dm500hd', 'dm800', 'ebox7358', 'eboxlumi', 'ebox5100','ixusszero', 'optimussos1', 'enfinity', 'uniboxhd1'):
+	if modes.has_key("YPbPr") and getBoxType() in ('wetekplay','et4x00', 'xp1000', 'tm2t', 'tmsingle', 'odimm7', 'vusolo2', 'tmnano','tmnanose', 'tmnano2super','tmnano3t','iqonios300hd', 'e3hd', 'dm500hdv2', 'dm500hd', 'dm800', 'ebox7358', 'eboxlumi', 'ebox5100','ixusszero', 'optimussos1', 'enfinity', 'uniboxhd1'):
 		del modes["YPbPr"]
 	if modes.has_key("Scart") and getBoxType() in ('tmnano', 'tmnano3t','tmnano2super'):
 		modes["RCA"] = modes["Scart"]
 		del modes["Scart"]		
-	if modes.has_key("Scart") and getBoxType() in ('gbquad', 'et5x00', 'ixussone', 'et6x00', 'tmnano','tmnanose', 'tmnano2t', 'tmnano2super'):
+	if modes.has_key("Scart") and getBoxType() in ('wetekplay', 'gbquad', 'et5x00', 'ixussone', 'et6x00', 'tmnano','tmnanose', 'tmnano2t', 'tmnano2super'):
 		del modes["Scart"]
 
 	def __init__(self):
