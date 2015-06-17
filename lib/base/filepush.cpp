@@ -326,7 +326,7 @@ void eFilePushThreadRecorder::thread()
 	sigaction(SIGUSR1, &act, 0);
 
 	hasStarted();
-
+	eDebug("[eFilePushThreadRecorder] Prepare to record....");
 	/* m_stop must be evaluated after each syscall. */
 	while (!m_stop)
 	{
