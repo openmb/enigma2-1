@@ -100,9 +100,9 @@ eDVBResourceManager::eDVBResourceManager()
 
 	m_boxtype = -1;
 	int fd = open("/proc/stb/info/model", O_RDONLY);
-	if (fd >= 0) {
-		char tmp[16];
-		int rd = read(fd, tmp, sizeof(tmp));
+	char tmp[16];
+	int rd = fd >= 0 ? read(fd, tmp, sizeof(tmp)) : 0;
+	if (fd >= 0)
 		close(fd);
 
 		if (rd == 0)
@@ -593,6 +593,10 @@ void *eDVBUsbAdapter::vtunerPump()
 			if (FD_ISSET(demuxFd, &rset))
 			{
 				ssize_t size = singleRead(demuxFd, buffer, sizeof(buffer));
+
+				if(size < 188)
+					continue;
+
 				if (size > 0 && writeAll(vtunerFd, buffer, size) <= 0)
 				{
 					break;
@@ -952,6 +956,45 @@ RESULT eDVBResourceManager::allocateDemux(eDVBRegisteredFrontend *fe, ePtr<eDVBA
 			}
 		}
 	}
+	else if (m_boxtype == WETEKPLAY)
+	{	
+		int n=0;
+		iDVBAdapter *adapter = fe ? fe->m_adapter : m_adapter.begin(); /* look for a demux on the same adapter as the frontend, or the first adapter for dvr playback */
+		int source = fe ? fe->m_frontend->getDVBID() : -1;
+		cap |= capHoldDecodeReference; // this is checked in eDVBChannel::getDemux
+		
+		for (; i != m_demux.end(); ++i, ++n)
+		{
+			if (fe)
+			{
+				if (!i->m_inuse && ((n == 0 && source == 0) ||
+					(n == 1 && source == 1)))
+				{				
+					if (!unused) 
+					{
+						unused = i;
+						break;
+					}					
+				}				
+				else if(i->m_adapter == adapter && 
+					i->m_demux->getSource() == source)
+				{
+					demux = new eDVBAllocatedDemux(i);
+					return 0;
+				}	
+		    }			
+			else if (n == (m_demux.size() - 1)) // always use last demux for PVR 
+			{
+				if (i->m_inuse)
+				{
+					demux = new eDVBAllocatedDemux(i);
+					return 0;
+				}
+				unused = i;
+				break;
+			}		    
+		}	
+	}
 	else
 	{
 		iDVBAdapter *adapter = fe ? fe->m_adapter : m_adapter.begin(); /* look for a demux on the same adapter as the frontend, or the first adapter for dvr playback */
@@ -1002,6 +1045,52 @@ RESULT eDVBResourceManager::allocateDemux(eDVBRegisteredFrontend *fe, ePtr<eDVBA
 			}
 		}
 	}
+#else // we use our own algo for demux detection
+	int n=0;
+	for (; i != m_demux.end(); ++i, ++n)
+	{
+		if(fe)
+		{
+			if (!i->m_inuse)
+			{
+				if (!unused)
+				{
+					// take the first unused
+					//eDebug("\nallocate demux b = %d\n",n);
+					unused = i;
+				}
+			}
+			else if (i->m_adapter == fe->m_adapter && i->m_demux->getSource() == fe->m_frontend->getDVBID())
+			{
+				// take the demux allocated to the same
+				// frontend,  just create a new reference
+				demux = new eDVBAllocatedDemux(i);
+				//eDebug("\nallocate demux b = %d\n",n);
+				return 0;
+			}
+		}
+		else if(n == (m_demux.size() - 1))
+		{
+			// Always use the last demux for PVR
+			// it is assumed that the last demux is not
+			// attached to a frontend. That is, there
+			// should be one instance of dvr & demux
+			// devices more than of frontend devices.
+			// Otherwise, playback and timeshift might
+			// interfere recording.
+			if (i->m_inuse)
+			{
+				// just create a new reference
+				demux = new eDVBAllocatedDemux(i);
+				//eDebug("\nallocate demux c = %d\n",n);
+				return 0;
+			}
+			unused = i;
+			//eDebug("\nallocate demux d = %d\n", n);
+			break;
+		}
+	}
+#endif
 
 	if (unused)
 	{
@@ -1662,6 +1751,7 @@ static size_t diff_upto(off_t high, off_t low, size_t max)
 	/* remember, this gets called from another thread. */
 void eDVBChannel::getNextSourceSpan(off_t current_offset, size_t bytes_read, off_t &start, size_t &size, int blocksize)
 {
+	const int blocksize = 188;
 	unsigned int max = align(1024*1024*1024, blocksize);
 	current_offset = align(current_offset, blocksize);
 
