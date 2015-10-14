@@ -908,6 +908,7 @@ RESULT eDVBResourceManager::allocateDemux(eDVBRegisteredFrontend *fe, ePtr<eDVBA
 
 	ePtr<eDVBRegisteredDemux> unused;
 
+#if not defined(__sh__)
 	if (m_boxtype == DM7025) // ATI
 	{
 		/* FIXME: hardware demux policy */
@@ -2187,6 +2188,12 @@ RESULT eDVBChannel::playSource(ePtr<iTsSource> &source, const char *streaminfo_f
 			return -ENODEV;
 		}
 #else
+#if defined(__sh__) // our pvr device is called dvr
+		char dvrDev[128];
+		int dvrIndex = m_mgr->m_adapter.begin()->getNumDemux() - 1;
+		sprintf(dvrDev, "/dev/dvb/adapter0/dvr%d", dvrIndex);
+		m_pvr_fd_dst = open(dvrDev, O_WRONLY);
+#else
 		ePtr<eDVBAllocatedDemux> &demux = m_demux ? m_demux : m_decoder_demux;
 		if (demux)
 		{
@@ -2202,6 +2209,7 @@ RESULT eDVBChannel::playSource(ePtr<iTsSource> &source, const char *streaminfo_f
 			eDebug("[eDVBChannel] no demux allocated yet.. so its not possible to open the dvr device!!");
 			return -ENODEV;
 		}
+#endif
 #endif
 	}
 
