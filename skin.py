@@ -46,6 +46,9 @@ dom_skins = [ ]
 
 def addSkin(name, scope = SCOPE_SKIN):
 	# read the skin
+	if name is None or not len(name):
+		print "[SKIN ERROR] attempt to add a skin without filename"
+		return False
 	filename = resolveFilename(scope, name)
 	if fileExists(filename):
 		mpath = os.path.dirname(filename) + "/"
@@ -255,7 +258,9 @@ def collectAttributes(skinAttributes, node, context, skin_path_prefix=None, igno
 
 def morphRcImagePath(value):
 	if rc_model.rcIsDefault() is False:
-		if ('rc.png' or 'oldrc.png') in value:
+		if value == '/usr/share/enigma2/skin_default/rc.png' or value == '/usr/share/enigma2/skin_default/rcold.png':
+			value = rc_model.getRcLocation() + 'rc.png'
+		elif value == '/usr/share/enigma2/skin_default/rc0.png' or value == '/usr/share/enigma2/skin_default/rc1.png' or value == '/usr/share/enigma2/skin_default/rc2.png':
 			value = rc_model.getRcLocation() + 'rc.png'
 	return value
 
