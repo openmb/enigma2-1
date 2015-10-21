@@ -402,15 +402,8 @@ class PluginDownloadBrowser(Screen):
 		self.listHeight = listsize.height()
 
 		if self.type == self.DOWNLOAD:
-			if (getImageType() != 'release' and feedsstatuscheck.getFeedsBool() != 'unknown') or (getImageType() == 'release' and feedsstatuscheck.getFeedsBool() not in ('stable', 'unstable')):
-				self["text"].setText(feedsstatuscheck.getFeedsErrorMessage())
-			elif getImageType() != 'release' or (config.softwareupdate.updateisunstable.value == '1' and config.softwareupdate.updatebeta.value):
-				self["text"].setText(_("WARNING: feeds may be unstable.") + '\n' + _("Downloading plugin information. Please wait..."))
-				self.container.execute(self.ipkg + " update")
-			elif config.softwareupdate.updateisunstable.value == '1' and not config.softwareupdate.updatebeta.value:
-				self["text"].setText(_("Sorry feeds seem be in an unstable state, if you wish to use them please enable 'Allow unstable (experimental) updates' in \"Software update settings\"."))
-			else:
-				self.container.execute(self.ipkg + " update")
+			self.type = self.UPDATE
+			self.container.execute(self.ipkg + " update")
 		elif self.type == self.REMOVE:
 			self.run = 1
 			self.startIpkgListInstalled()

@@ -29,13 +29,10 @@ class Rc:
 		self.onShown.append(self.initRc)
 
 	def initRc(self):
-		if getBoxType() in ('uniboxhd1', 'uniboxhd2', 'uniboxhd3', 'sezam5000hd', 'mbtwin', 'beyonwizt3'):
+		if self.isDefaultRc:
 			self["rc"].setPixmapNum(config.misc.rcused.value)
 		else:
-			if self.isDefaultRc:
-				self["rc"].setPixmapNum(config.misc.rcused.value)
-			else:
-				self["rc"].setPixmapNum(0)
+			self["rc"].setPixmapNum(0)
 
 	def readPositions(self):
 		if self.isDefaultRc:

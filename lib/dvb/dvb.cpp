@@ -98,18 +98,25 @@ eDVBResourceManager::eDVBResourceManager()
 		addAdapter(adapter, true);
 	}
 
+	m_boxtype = -1;
 	int fd = open("/proc/stb/info/model", O_RDONLY);
-	char tmp[16];
-	int rd = fd >= 0 ? read(fd, tmp, sizeof(tmp)) : 0;
-	if (fd >= 0)
+	if (fd >= 0) {
+		char tmp[16];
+		int rd = read(fd, tmp, sizeof(tmp));
 		close(fd);
 
-	if (!strncmp(tmp, "dm7025\n", rd))
-		m_boxtype = DM7025;
-	else if (!strncmp(tmp, "wetekplay\n", rd))
-		m_boxtype = WETEKPLAY;
+		if (rd == 0)
+			eDebug("[eDVBResourceManager] /proc/stb/info empty. Use fallback via demux count!");
+		else if (!strncmp(tmp, "wetekplay\n", rd))
+			m_boxtype = WETEKPLAY;
+		else
+			eDebug("[eDVBResourceManager] boxtype detection via /proc/stb/info not possible. Use fallback via demux count!");
+	}
 	else {
 		eDebug("[eDVBResourceManager] cannot open /proc/stb/info. Use fallback via demux count!");
+	}
+
+	if (m_boxtype == -1) {
 		if (m_demux.size() == 3)
 			m_boxtype = DM800;
 		else if (m_demux.size() < 5)
@@ -574,10 +581,6 @@ void *eDVBUsbAdapter::vtunerPump()
 			if (FD_ISSET(demuxFd, &rset))
 			{
 				ssize_t size = singleRead(demuxFd, buffer, sizeof(buffer));
-
-				if(size < 188)
-					continue;
-
 				if (size > 0 && writeAll(vtunerFd, buffer, size) <= 0)
 				{
 					break;
@@ -908,7 +911,6 @@ RESULT eDVBResourceManager::allocateDemux(eDVBRegisteredFrontend *fe, ePtr<eDVBA
 
 	ePtr<eDVBRegisteredDemux> unused;
 
-#if not defined(__sh__)
 	if (m_boxtype == DM7025) // ATI
 	{
 		/* FIXME: hardware demux policy */
@@ -2187,12 +2189,6 @@ RESULT eDVBChannel::playSource(ePtr<iTsSource> &source, const char *streaminfo_f
 			return -ENODEV;
 		}
 #else
-#if defined(__sh__) // our pvr device is called dvr
-		char dvrDev[128];
-		int dvrIndex = m_mgr->m_adapter.begin()->getNumDemux() - 1;
-		sprintf(dvrDev, "/dev/dvb/adapter0/dvr%d", dvrIndex);
-		m_pvr_fd_dst = open(dvrDev, O_WRONLY);
-#else
 		ePtr<eDVBAllocatedDemux> &demux = m_demux ? m_demux : m_decoder_demux;
 		if (demux)
 		{
@@ -2208,7 +2204,6 @@ RESULT eDVBChannel::playSource(ePtr<iTsSource> &source, const char *streaminfo_f
 			eDebug("[eDVBChannel] no demux allocated yet.. so its not possible to open the dvr device!!");
 			return -ENODEV;
 		}
-#endif
 #endif
 	}
 
