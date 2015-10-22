@@ -27,7 +27,14 @@ class FeedsStatusCheck:
 
 	def getFeedSatus(self):
 		status = '1'
+		trafficLight == 'stable'
+		if getImageType() != 'developer':
+			status = '0'
+			config.softwareupdate.updateisunstable.setValue(status)
+			return 'stable'
+
 		trafficLight = 'unknown'
+
 		if about.getIfConfig('eth0').has_key('addr') or about.getIfConfig('eth1').has_key('addr') or about.getIfConfig('wlan0').has_key('addr') or about.getIfConfig('ra0').has_key('addr'):
 			try:
 				req = urllib2.Request('http://openvix.co.uk/TrafficLightState.php')
