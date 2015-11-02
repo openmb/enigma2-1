@@ -1,10 +1,6 @@
 installdir = $(pkglibdir)/python/Plugins/Extensions
 
-SUBDIRS = TuxboxPlugins CutListEditor PicturePlayer MediaScanner MediaPlayer SocketMMI DVDBurn Infopanel Volume_adjust
-
-if HAVE_LIBDDVD
-SUBDIRS += DVDPlayer
-endif
+SUBDIRS = TuxboxPlugins CutListEditor PicturePlayer MediaScanner SocketMMI DVDBurn MediaPlayer
 
 if HAVE_WETEK_XBMC
 SUBDIRS +=  StartKodi
