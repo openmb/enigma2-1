@@ -22,6 +22,7 @@ if [ -e /usr/lib/kodi/kodi.sh ]; then
 	fi
 fi
 
+
 #check for /etc/enigma2 folder
 if [ ! -d /etc/enigma2 ] ; then
 	mkdir -p /etc/enigma2
