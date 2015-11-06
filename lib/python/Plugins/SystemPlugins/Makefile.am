@@ -27,6 +27,10 @@ if VUULTIMO
 SUBDIRS += CableScan
 endif
 
+if VUSOLO4K
+SUBDIRS += BoxModeConfig FastZapSupport
+endif
+
 if HAVE_LIBVUGLES2
 SUBDIRS += AnimationSetup
 endif
