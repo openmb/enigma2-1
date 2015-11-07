@@ -64,7 +64,7 @@ class AVSwitch:
 	modes["Scart"] = ["PAL", "NTSC", "Multi"]
 	# modes["DVI-PC"] = ["PC"]
 
-	if about.getChipSetString() in ('7376'):
+	if about.getChipSetString() == '7376':
 		modes["HDMI"] = ["2160p", "1080p", "1080i", "720p", "576p", "576i", "480p", "480i"]
 		widescreen_modes = {"2160p", "1080p", "1080i", "720p"}
 	else if: about.getChipSetString() in ('7358', '7356', '7362', '7424', '7425', '7241', '7552'):
