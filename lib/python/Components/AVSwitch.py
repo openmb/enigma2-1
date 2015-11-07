@@ -40,6 +40,10 @@ class AVSwitch:
 	rates["1080p"] =	{ 	"50Hz":		{ 50: "1080p50" },
 							"60Hz":		{ 60: "1080p" },
 							"multi":	{ 50: "1080p50", 60: "1080p" } }
+							
+	rates["2160p"] =	{ 	"50Hz":		{ 50: "2160p50" },
+							"60Hz":		{ 60: "2160p" },
+							"multi":	{ 50: "2160p50", 60: "2160p" } }
 
 	rates["PC"] = {
 		"1024x768": { 60: "1024x768" }, # not possible on DM7025
@@ -60,12 +64,15 @@ class AVSwitch:
 	modes["Scart"] = ["PAL", "NTSC", "Multi"]
 	# modes["DVI-PC"] = ["PC"]
 
-	if about.getChipSetString() in ('7358', '7356', '7362', '7424', '7425', '7241', '7552'):
-		modes["HDMI"] = ["720p", "1080p", "1080i", "576p", "576i", "480p", "480i"]
-		widescreen_modes = {"720p", "1080p", "1080i"}
+	if about.getChipSetString() in ('7376'):
+		modes["HDMI"] = ["2160p", "1080p", "1080i", "720p", "576p", "576i", "480p", "480i"]
+		widescreen_modes = {"2160p", "1080p", "1080i", "720p"}
+	else if: about.getChipSetString() in ('7358', '7356', '7362', '7424', '7425', '7241', '7552'):
+			modes["HDMI"] = ["1080p", "1080i", "720p", "576p", "576i", "480p", "480i"]
+			widescreen_modes = {"1080p", "1080i" , "720p"}
 	else:
-		modes["HDMI"] = ["720p", "1080i", "576p", "576i", "480p", "480i"]
-		widescreen_modes = {"720p", "1080i"}
+		modes["HDMI"] = ["1080i", "576p", "720p", "576i", "480p", "480i"]
+		widescreen_modes = {"1080i" , "720p"}
 
 	modes["YPbPr"] = modes["HDMI"]
 	if getBrandOEM() == 'vuplus':
@@ -341,7 +348,7 @@ def InitAVSwitch():
 	if config.av.yuvenabled.value:
 		colorformat_choices["yuv"] = _("YPbPr")
 
-	config.av.autores = ConfigSelection(choices={"disabled": _("Disabled"), "all": _("All resolutions"), "hd": _("only HD")}, default="disabled")
+	config.av.autores = ConfigSelection(choices={"disabled": _("Disabled"), "all": _("All resolutions"), "hd": _("only HD"), "4k": _("only 4K")}, default="disabled")
 	choicelist = []
 	for i in range(5, 16):
 		choicelist.append(("%d" % i, ngettext("%d second", "%d seconds", i) % i))
@@ -354,6 +361,9 @@ def InitAVSwitch():
 	config.av.autores_1080p24 = ConfigSelection(choices={"1080p24": _("1080p 24Hz"), "1080p25": _("1080p 25Hz")}, default="1080p24")
 	config.av.autores_1080p25 = ConfigSelection(choices={"1080p25": _("1080p 25Hz"), "1080p50": _("1080p 50Hz")}, default="1080p25")
 	config.av.autores_1080p30 = ConfigSelection(choices={"1080p30": _("1080p 30Hz"), "1080p60": _("1080p 60Hz")}, default="1080p30")
+	config.av.autores_2160p24 = ConfigSelection(choices={"2160p24": _("2160p 24Hz"), "2160p25": _("2160p 25Hz")}, default="2160p24")
+	config.av.autores_2160p25 = ConfigSelection(choices={"2160p25": _("2160p 25Hz"), "2160p50": _("2160p 50Hz")}, default="2160p25")
+	config.av.autores_2160p30 = ConfigSelection(choices={"2160p30": _("2160p 30Hz"), "2160p60": _("2160p 60Hz")}, default="2160p30")
 	config.av.colorformat = ConfigSelection(choices=colorformat_choices, default="rgb")
 	config.av.aspectratio = ConfigSelection(choices={
 			"4_3_letterbox": _("4:3 Letterbox"),

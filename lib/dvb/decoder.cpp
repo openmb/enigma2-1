@@ -327,8 +327,8 @@ int eDVBVideo::startPid(int pid, int type)
 			streamtype = VIDEO_STREAMTYPE_VC1_SM;
 			break;
 		case H265_HEVC:
-            streamtype = VIDEO_STREAMTYPE_H265_HEVC;
-            break;
+			streamtype = VIDEO_STREAMTYPE_H265_HEVC;
+			break;
 		}
 
 		eDebugNoNewLineStart("[eDVBVideo%d] VIDEO_SET_STREAMTYPE %d - ", m_dev, streamtype);
