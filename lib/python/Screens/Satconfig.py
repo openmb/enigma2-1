@@ -107,7 +107,7 @@ class NimSetup(Screen, ConfigListScreen, ServiceStopScreen):
 			if len(nimmanager.canConnectTo(self.slotid)) > 0:
 				choices["loopthrough"] = _("Loop through to")
 			if isFBCLink(self.nim):
-                choices = { "nothing": _("not configured"), "advanced": _("advanced")}
+				choices = { "nothing": _("not configured"), "advanced": _("advanced")}
 			self.nimConfig.configMode.setChoices(choices, default = "simple")
 
 	def createSetup(self):
@@ -179,8 +179,8 @@ class NimSetup(Screen, ConfigListScreen, ServiceStopScreen):
 				for id in connectable:
 					choices.append((str(id), nimmanager.getNimDescription(id)))
 				if isFBCLink(self.nim):
-                    if self.nimConfig.advanced.unicableconnected.value != True:
-                        self.nimConfig.advanced.unicableconnected.value = True
+					if self.nimConfig.advanced.unicableconnected.value != True:
+						self.nimConfig.advanced.unicableconnected.value = True
 				self.nimConfig.connectedTo.setChoices(choices)
 				self.list.append(getConfigListEntry(_("Connected to"), self.nimConfig.connectedTo))
 			elif self.nimConfig.configMode.value == "nothing":
@@ -325,9 +325,9 @@ class NimSetup(Screen, ConfigListScreen, ServiceStopScreen):
 
 		if currLnb:
 			if isFBCLink(self.nim):
-                if currLnb.lof.value != "unicable":
-                    currLnb.lof.value = "unicable"
-					
+				if currLnb.lof.value != "unicable":
+					currLnb.lof.value = "unicable"
+
 			self.list.append(getConfigListEntry(_("Priority"), currLnb.prio))
 			self.advancedLof = getConfigListEntry("LOF", currLnb.lof)
 			self.list.append(self.advancedLof)
@@ -592,7 +592,7 @@ class NimSetup(Screen, ConfigListScreen, ServiceStopScreen):
 
 	def keyLeft(self):
 		if isFBCLink(self.nim):
-            checkList = (self.advancedLof, self.advancedConnected)
+			checkList = (self.advancedLof, self.advancedConnected)
 			curEntry = self["config"].getCurrent()
 			if curEntry in checkList:
 				return
@@ -609,7 +609,7 @@ class NimSetup(Screen, ConfigListScreen, ServiceStopScreen):
 
 	def keyRight(self):
 		if isFBCLink(self.nim):
-            checkList = (self.advancedLof, self.advancedConnected)
+			checkList = (self.advancedLof, self.advancedConnected)
 			curEntry = self["config"].getCurrent()
 			if curEntry in checkList:
 				return
@@ -697,21 +697,21 @@ class NimSelection(Screen):
 		self.setTitle(_("Choose Tuner"))
 		
 	def loadFBCLinks(self):
-        for x in nimmanager.nim_slots:
-            slotid = x.slot
-            nimConfig = nimmanager.getNimConfig(x.slot)
-            configMode = nimConfig.configMode.value
-            if self.showNim(x):
+		for x in nimmanager.nim_slots:
+			slotid = x.slot
+			nimConfig = nimmanager.getNimConfig(x.slot)
+			configMode = nimConfig.configMode.value
+			if self.showNim(x):
 				if x.isCompatible("DVB-S"):
-                    if isFBCLink(x) and configMode != "advanced":
+					if isFBCLink(x) and configMode != "advanced":
 						from enigma import getLinkedSlotID
-                        link = getLinkedSlotID(x.slot)
+						link = getLinkedSlotID(x.slot)
 
-                        if link == -1:
-                            nimConfig.configMode.value = "nothing"
-                        else:
-                            nimConfig.configMode.value = "loopthrough"
-                            nimConfig.connectedTo.value = str(link)
+						if link == -1:
+							nimConfig.configMode.value = "nothing"
+						else:
+							nimConfig.configMode.value = "loopthrough"
+							nimConfig.connectedTo.value = str(link)
 
 	def exit(self):
 		self.close(True)
@@ -722,16 +722,16 @@ class NimSelection(Screen):
 	def okbuttonClick(self):
 		nim = self["nimlist"].getCurrent()
 		nim = nim and nim[3]
-		
+
 		nimConfig = nimmanager.getNimConfig(nim.slot)
-        if isFBCLink(nim) and nimConfig.configMode.value == "loopthrough":
+		if isFBCLink(nim) and nimConfig.configMode.value == "loopthrough":
 				return
 		if nim is not None and not nim.empty and nim.isSupported():
 			self.session.openWithCallback(boundFunction(self.NimSetupCB, self["nimlist"].getIndex()), self.resultclass, nim.slot)
 			
 	def NimSetupCB(self):
-        self.loadFBCLinks()
-        self.updateList()
+		self.loadFBCLinks()
+		self.updateList()
 
 	def showNim(self, nim):
 		return True
@@ -784,7 +784,7 @@ class NimSelection(Screen):
 					elif nimConfig.configMode.value == "advanced":
 						text = _("Advanced")
 					if isFBCLink(x) and nimConfig.configMode.value != "advanced":
-                        text += _("\n<This tuner is configured automatically>")
+						text += _("\n<This tuner is configured automatically>")
 				elif x.isCompatible("DVB-T") or x.isCompatible("DVB-C"):
 					if nimConfig.configMode.value == "nothing":
 						text = _("Nothing connected")

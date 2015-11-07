@@ -111,7 +111,7 @@ class ServiceScan(Screen):
 		self.onClose.append(self.doPluginCB)
 	
 	def doPluginCB(self):
-        for p in plugins.getPlugins(PluginDescriptor.WHERE_SERVICESCAN):
+		for p in plugins.getPlugins(PluginDescriptor.WHERE_SERVICESCAN):
 			p()
 
 	def doServiceScan(self):

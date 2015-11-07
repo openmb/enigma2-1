@@ -2408,7 +2408,7 @@ class InfoBarExtensions:
 				}, 1) # lower priority
 				
 		for p in plugins.getPlugins(PluginDescriptor.WHERE_EXTENSIONSINGLE):
-                p(self)
+			p(self)
 
 		self.addExtension(extension = self.getLogManager, type = InfoBarExtensions.EXTENSION_LIST)
 		self.addExtension(extension = self.getOsd3DSetup, type = InfoBarExtensions.EXTENSION_LIST)

@@ -37,11 +37,11 @@ class AVSwitch:
 							"60Hz":		{ 60: "1080i" },
 							"multi":	{ 50: "1080i50", 60: "1080i" } }
 
-	rates["1080p"] =	{ 	"50Hz":		{ 50: "1080p50" },
+	rates["1080p"] =	{	"50Hz":		{ 50: "1080p50" },
 							"60Hz":		{ 60: "1080p" },
 							"multi":	{ 50: "1080p50", 60: "1080p" } }
 							
-	rates["2160p"] =	{ 	"50Hz":		{ 50: "2160p50" },
+	rates["2160p"] =	{	"50Hz":		{ 50: "2160p50" },
 							"60Hz":		{ 60: "2160p" },
 							"multi":	{ 50: "2160p50", 60: "2160p" } }
 
@@ -71,8 +71,8 @@ class AVSwitch:
 			modes["HDMI"] = ["1080p", "1080i", "720p", "576p", "576i", "480p", "480i"]
 			widescreen_modes = {"1080p", "1080i" , "720p"}
 	else:
-		modes["HDMI"] = ["1080i", "576p", "720p", "576i", "480p", "480i"]
-		widescreen_modes = {"1080i" , "720p"}
+		modes["HDMI"] = ["1080i", "720p", "576p", "576i", "480p", "480i"]
+		widescreen_modes = {"1080i", "720p"}
 
 	modes["YPbPr"] = modes["HDMI"]
 	if getBrandOEM() == 'vuplus':
