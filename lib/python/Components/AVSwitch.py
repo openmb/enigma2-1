@@ -67,9 +67,9 @@ class AVSwitch:
 	if about.getChipSetString() == '7376':
 		modes["HDMI"] = ["2160p", "1080p", "1080i", "720p", "576p", "576i", "480p", "480i"]
 		widescreen_modes = {"2160p", "1080p", "1080i", "720p"}
-	else if: about.getChipSetString() in ('7358', '7356', '7362', '7424', '7425', '7241', '7552'):
-			modes["HDMI"] = ["1080p", "1080i", "720p", "576p", "576i", "480p", "480i"]
-			widescreen_modes = {"1080p", "1080i" , "720p"}
+	elif about.getChipSetString() in ('7358', '7356', '7362', '7424', '7425', '7241', '7552'):
+		modes["HDMI"] = ["1080p", "1080i", "720p", "576p", "576i", "480p", "480i"]
+		widescreen_modes = {"1080p", "1080i" , "720p"}
 	else:
 		modes["HDMI"] = ["1080i", "720p", "576p", "576i", "480p", "480i"]
 		widescreen_modes = {"1080i", "720p"}
