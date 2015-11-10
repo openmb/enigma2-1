@@ -823,15 +823,15 @@ void eDVBResourceManager::setFrontendType(int index, const char *type)
 RESULT eDVBResourceManager::allocateFrontend(ePtr<eDVBAllocatedFrontend> &fe, ePtr<iDVBFrontendParameters> &feparm, bool simulate)
 {
 	eSmartPtrList<eDVBRegisteredFrontend> &frontends = simulate ? m_simulate_frontend : m_frontend;
-//  ePtr<eDVBRegisteredFrontend> best;
-    eDVBRegisteredFrontend *best = NULL;
+//	ePtr<eDVBRegisteredFrontend> best;
+	eDVBRegisteredFrontend *best = NULL;
 	int bestval = 0;
 	int foundone = 0;
-	
+
 	int check_fbc_linked = 0;
-    eDVBRegisteredFrontend *fbc_fe = NULL;
-    eDVBRegisteredFrontend *best_fbc_fe = NULL;
-    eFBCTunerManager* fbcmng = eFBCTunerManager::getInstance();
+	eDVBRegisteredFrontend *fbc_fe = NULL;
+	eDVBRegisteredFrontend *best_fbc_fe = NULL;
+	eFBCTunerManager* fbcmng = eFBCTunerManager::getInstance();
 
 	for (eSmartPtrList<eDVBRegisteredFrontend>::iterator i(frontends.begin()); i != frontends.end(); ++i)
 	{

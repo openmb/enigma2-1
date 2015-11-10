@@ -64,7 +64,7 @@ class AVSwitch:
 	modes["Scart"] = ["PAL", "NTSC", "Multi"]
 	# modes["DVI-PC"] = ["PC"]
 
-	if about.getChipSetString() == '7376':
+	if (about.getChipSetString() in ('7366', '7376', '5272s'):
 		modes["HDMI"] = ["2160p", "1080p", "1080i", "720p", "576p", "576i", "480p", "480i"]
 		widescreen_modes = {"2160p", "1080p", "1080i", "720p"}
 	elif about.getChipSetString() in ('7358', '7356', '7362', '7424', '7425', '7241', '7552'):
@@ -81,12 +81,12 @@ class AVSwitch:
 	# if modes.has_key("DVI-PC") and not getModeList("DVI-PC"):
 	# 	print "remove DVI-PC because of not existing modes"
 	# 	del modes["DVI-PC"]
-	if modes.has_key("YPbPr") and getBoxType() in ('et4x00', 'xp1000', 'tm2t', 'tmsingle', 'odimm7', 'vusolo2', 'tmnano','tmnanose','tmnanosecombo','tmnano2super','tmnano3t','iqonios300hd', 'e3hd', 'dm500hdv2', 'dm500hd', 'dm800', 'ebox7358', 'eboxlumi', 'ebox5100','ixusszero', 'optimussos1', 'enfinity', 'uniboxhd1'):
+	if modes.has_key("YPbPr") and getBoxType() in ('vusolo4k', 'et4x00', 'xp1000', 'tm2t', 'tmsingle', 'odimm7', 'vusolo2', 'tmnano','tmnanose','tmnanosecombo','tmnano2super','tmnano3t','iqonios300hd', 'e3hd', 'dm500hdv2', 'dm500hd', 'dm800', 'ebox7358', 'eboxlumi', 'ebox5100','ixusszero', 'optimussos1', 'enfinity', 'uniboxhd1'):
 		del modes["YPbPr"]
-	if modes.has_key("Scart") and getBoxType() in ('tmnano','tmnanosecombo','tmnano3t','tmnano2super'):
+	if modes.has_key("Scart") and getBoxType() in ('vusolo4k', 'tmnano','tmnanosecombo','tmnano3t','tmnano2super'):
 		modes["RCA"] = modes["Scart"]
 		del modes["Scart"]		
-	if modes.has_key("Scart") and getBoxType() in ('gbquad', 'et5x00', 'ixussone', 'et6x00', 'tmnano','tmnanose','tmnanosecombo','tmnano2t', 'tmnano2super'):
+	if modes.has_key("Scart") and getBoxType() in ('vusolo4k', 'gbquad', 'et5x00', 'ixussone', 'et6x00', 'tmnano','tmnanose','tmnanosecombo','tmnano2t', 'tmnano2super'):
 		del modes["Scart"]
 
 	def __init__(self):
@@ -463,6 +463,31 @@ def InitAVSwitch():
 		config.av.bypass_edid_checking.addNotifier(setEDIDBypass)
 	else:
 		config.av.bypass_edid_checking = ConfigNothing()
+		
+	if os.path.exists("/proc/stb/video/hdmi_colorspace"):
+		f = open("/proc/stb/video/hdmi_colorspace", "r")
+		have_colorspace = f.read().strip().split(" ")
+		f.close()
+	else:
+		have_colorspace = False
+
+	SystemInfo["havecolorspace"] = have_colorspace
+
+	if have_colorspace:
+		def setHDMIColorspace(configElement):
+			try:
+				f = open("/proc/stb/video/hdmi_colorspace", "w")
+				f.write(configElement.value)
+				f.close()
+			except:
+				pass
+		config.av.hdmicolorspace = ConfigSelection(choices={
+				"Edid(Auto": _("Auto"),
+				"Hdmi_Rgb": _("RGB")},
+				default = "Edid(Auto)")
+		config.av.hdmicolorspace.addNotifier(setHDMIColorspace)
+	else:
+		config.av.hdmicolorspace = ConfigNothing()
 
 	if os.path.exists("/proc/stb/audio/3d_surround_choices"):
 		f = open("/proc/stb/audio/3d_surround_choices", "r")

@@ -38,7 +38,10 @@ def getChipSetString():
 
 def getCPUSpeedString():
 	mhz = _("unavailable")
-	try:
+	if getBoxType() in ('vusolo4k'):
+		return "1.5 GHz"
+	else:
+		try:
 		file = open('/proc/cpuinfo', 'r')
 		lines = file.readlines()
 		for x in lines:

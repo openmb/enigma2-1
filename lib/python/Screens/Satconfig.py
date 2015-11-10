@@ -644,9 +644,6 @@ class NimSetup(Screen, ConfigListScreen, ServiceStopScreen):
 			for x in self["config"].list:
 				x[1].save()
 			configfile.save()
-		
-		for p in plugins.getPlugins(PluginDescriptor.WHERE_SATCONFIGCHANGED):
-				p()
 
 	def cancelConfirm(self, result):
 		if not result:
@@ -728,8 +725,8 @@ class NimSelection(Screen):
 				return
 		if nim is not None and not nim.empty and nim.isSupported():
 			self.session.openWithCallback(boundFunction(self.NimSetupCB, self["nimlist"].getIndex()), self.resultclass, nim.slot)
-			
-	def NimSetupCB(self):
+
+	def NimSetupCB(self, index=None):
 		self.loadFBCLinks()
 		self.updateList()
 
