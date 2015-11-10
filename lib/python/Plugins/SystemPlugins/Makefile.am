@@ -28,7 +28,7 @@ SUBDIRS += CableScan
 endif
 
 if VUSOLO4K
-SUBDIRS += BoxModeConfig FastZapSupport
+SUBDIRS += FastZapSupport
 endif
 
 if HAVE_LIBVUGLES2
