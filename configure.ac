@@ -336,7 +336,7 @@ fi
 
 if test "$BOXTYPE" == "vusolo4k" ; then
 	AC_DEFINE(TUNER_VUSOLO4K, 1,[define BOXTYPE VUSOLO4K])
-+fi
+fi
 
 AC_ARG_WITH(libsdl,
 	AS_HELP_STRING([--with-libsdl],[use libsdl, yes or no]),
