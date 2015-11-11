@@ -97,6 +97,7 @@ int eDVBPMTParser::getProgramInfo(program &program)
 					isvideo = 1;
 					//break; fall through !!!
 				case 0x24: // H265 HEVC
+				case 0x27: // H265 HEVC
 					if (!isvideo)
 					{
 						video.type = videoStream::vtH265_HEVC;
@@ -302,6 +303,10 @@ int eDVBPMTParser::getProgramInfo(program &program)
 										isvideo = 1;
 									}
 								}
+								case 0x48455643: /*HEVC */
+									isvideo = 1;
+									video.type = videoStream::vtH265_HEVC;
+									break;
 								default:
 									break;
 								}
