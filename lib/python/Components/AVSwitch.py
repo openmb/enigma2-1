@@ -65,14 +65,14 @@ class AVSwitch:
 	# modes["DVI-PC"] = ["PC"]
 
 	if about.getChipSetString() in ('7366', '7376', '5272s'):
-		modes["HDMI"] = ["2160p", "1080p", "1080i", "720p", "576p", "576i", "480p", "480i"]
-		widescreen_modes = {"2160p", "1080p", "1080i", "720p"}
+		modes["HDMI"] = ["720p", "1080p", "2160p", "1080i", "576p", "576i", "480p", "480i"]
+		widescreen_modes = {"720p", "1080p", "2160p", "1080i"}
 	elif about.getChipSetString() in ('7358', '7356', '7362', '7424', '7425', '7241', '7552'):
-		modes["HDMI"] = ["1080p", "1080i", "720p", "576p", "576i", "480p", "480i"]
-		widescreen_modes = {"1080p", "1080i" , "720p"}
+		modes["HDMI"] = ["720p", "1080p", "1080i", "576p", "576i", "480p", "480i"]
+		widescreen_modes = {"720p", "1080p", "1080i"}
 	else:
-		modes["HDMI"] = ["1080i", "720p", "576p", "576i", "480p", "480i"]
-		widescreen_modes = {"1080i", "720p"}
+		modes["HDMI"] = ["720p", "1080i", "576p", "576i", "480p", "480i"]
+		widescreen_modes = {"720p", "1080i"}
 
 	modes["YPbPr"] = modes["HDMI"]
 	if getBrandOEM() == 'vuplus':
