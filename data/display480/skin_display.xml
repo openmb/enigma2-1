@@ -295,7 +295,7 @@
 	<screen name="GraphicalInfoBarEPG_summary" position="0,0" size="480,320">
 		<panel name="EPGSelection_summary" />
 	</screen>
-	<screen name="EPGSelectionMulti_summary" position="0,0" size="720,576">
+	<screen name="EPGSelectionMulti_summary" position="0,0" size="480,320">
 		<panel name="EPGSelection_summary" />
 	</screen>
 
