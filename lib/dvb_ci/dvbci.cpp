@@ -788,7 +788,7 @@ int eDVBCIInterfaces::setInputSource(int tuner_no, data_source source)
 		{
 #ifdef TUNER_VUSOLO4K
 			case TUNER_A ... CI_D:
-				fprintf(ci, tuner_source[(int)source]);
+				fprintf(input, tuner_source[(int)source]);
 				break;
 #else
 			case CI_A:
