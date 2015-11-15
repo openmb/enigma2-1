@@ -1413,6 +1413,11 @@ int eDVBCISlot::setSource(data_source source)
 		FILE *ci = fopen(buf, "wb");
 		switch(source)
 		{
+#ifdef TUNER_VUSOLO4K
+			case TUNER_A ... CI_D:
+				fprintf(ci, tuner_source[(int)source]);
+				break;
+#else
 			case CI_A:
 				fprintf(ci, "CI0");
 				break;
@@ -1437,6 +1442,7 @@ int eDVBCISlot::setSource(data_source source)
 				case TUNER_D:
 				fprintf(ci, "D");
 				break;
+#endif
 			default:
 				eDebug("[CI] Slot %d: setSource %d failed!!!\n", getSlotID(), (int)source);
 				break;
