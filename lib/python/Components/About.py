@@ -57,6 +57,7 @@ def getCPUSpeedString():
 		return _("unavailable")
 
 def getCPUString():
+	system = _("unavailable")
 	try:
 		system="unknown"
 		file = open('/proc/cpuinfo', 'r')
@@ -66,6 +67,8 @@ def getCPUString():
 			if len(splitted) > 1:
 				splitted[1] = splitted[1].replace('\n','')
 				if splitted[0].startswith("system type"):
+					system = splitted[1].split(' ')[0]
+				elif splitted[0].startswith("model name"):
 					system = splitted[1].split(' ')[0]
 		file.close()
 		return system

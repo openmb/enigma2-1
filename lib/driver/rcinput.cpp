@@ -34,6 +34,8 @@ void eRCDeviceInputDev::handleCode(long rccode)
 
 	if (ev->type != EV_KEY)
 		return;
+		
+	eDebug("[eInputDeviceInit] %x %x %x", ev->value, ev->code, ev->type);
 
 	int km = iskeyboard ? input->getKeyboardMode() : eRCInput::kmNone;
 
@@ -106,6 +108,7 @@ void eRCDeviceInputDev::handleCode(long rccode)
 			return;
 		}
 	}
+
 
 #if WETEKRC
 /*
@@ -280,7 +283,7 @@ public:
 				return;
 			}
 		}
-		eDebug("Remove '%s', not found", filename);
+		eDebug("[eInputDeviceInit] Remove '%s', not found", filename);
 	}
 
 	void addAll(void)
