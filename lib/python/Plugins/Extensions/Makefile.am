@@ -6,4 +6,8 @@ if HAVE_WETEK_XBMC
 SUBDIRS +=  StartKodi
 endif
 
+if VUSOLO4K
+SUBDIRS += MiniTV
+endif
+
 install_PYTHON = __init__.py
