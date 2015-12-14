@@ -19,6 +19,15 @@
 #include <linux/dvb/video.h>
 #endif
 
+#ifdef HAVE_ALSA
+# ifndef ALSA_VOLUME_MIXER
+#  define ALSA_VOLUME_MIXER "Master"
+# endif
+# ifndef ALSA_CARD
+#  define ALSA_CARD "default"
+# endif
+#endif
+
 eDVBVolumecontrol* eDVBVolumecontrol::instance = NULL;
 
 eDVBVolumecontrol* eDVBVolumecontrol::getInstance()
@@ -44,8 +53,9 @@ int eDVBVolumecontrol::openMixer()
 	if (!mainVolume)
 	{
 		int err;
-		char *card = "hw:0";
+		char *card = ALSA_CARD;
 
+		eDebug("[eDVBVolumecontrol] Setup ALSA Mixer %s - %s", ALSA_CARD, ALSA_VOLUME_MIXER);
 		/* Perform the necessary pre-amble to start up ALSA Mixer */
 		err = snd_mixer_open(&alsaMixerHandle, 0);
 		if (err < 0)
@@ -81,8 +91,8 @@ int eDVBVolumecontrol::openMixer()
 		/* Set up Decoder 0 as the main volume control. */
 		snd_mixer_selem_id_t *sid;
 		snd_mixer_selem_id_alloca(&sid);
+		snd_mixer_selem_id_set_name(sid, ALSA_VOLUME_MIXER);
 		snd_mixer_selem_id_set_index(sid, 0);
-		snd_mixer_selem_id_set_name(sid, "Master");
 		mainVolume = snd_mixer_find_selem(alsaMixerHandle, sid);
 	}
 	return mainVolume ? 0 : -1;
@@ -126,7 +136,9 @@ void eDVBVolumecontrol::setVolume(int left, int right)
 	rightVol = checkVolume(right);
 
 #ifdef HAVE_ALSA
-	if (mainVolume) snd_mixer_selem_set_playback_volume_all(mainVolume, muted ? 0 : leftVol);
+	eDebug("[eDVBVolumecontrol] Setvolume: ALSA leftVol=%d", leftVol);
+	if (mainVolume)
+		snd_mixer_selem_set_playback_volume_all(mainVolume, muted ? 0 : leftVol);
 #else
 		/* convert to -1dB steps */
 	left = 63 - leftVol * 63 / 100;
@@ -174,7 +186,9 @@ bool eDVBVolumecontrol::isMuted()
 void eDVBVolumecontrol::volumeMute()
 {
 #ifdef HAVE_ALSA
-	if (mainVolume) snd_mixer_selem_set_playback_volume_all(mainVolume, 0);
+	eDebug("[eDVBVolumecontrol] Setvolume: ALSA Mute");
+	if (mainVolume)
+		snd_mixer_selem_set_playback_volume_all(mainVolume, 0);
 	muted = true;
 #else
 	int fd = openMixer();
@@ -195,6 +209,7 @@ void eDVBVolumecontrol::volumeMute()
 void eDVBVolumecontrol::volumeUnMute()
 {
 #ifdef HAVE_ALSA
+	eDebug("[eDVBVolumecontrol] Setvolume: ALSA unMute to %d", leftVol);
 	if (mainVolume)
 		snd_mixer_selem_set_playback_volume_all(mainVolume, leftVol);
 	muted = false;
