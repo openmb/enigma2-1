@@ -353,7 +353,7 @@ if test "$BOXTYPE" == "wetekplay"; then
 	AC_DEFINE(WETEKRC, 1, [WetekPlay Remote-use BACKSPACE to toggle extended functions on numeric buttons])
 	AC_DEFINE(HAVE_ALSA, 1, [try with alsa])
 	PKG_CHECK_MODULES(ALSA, alsa)
-	PKG_CHECK_MODULES(AMLPLAYER, libamcodec libamadec)
+	PKG_CHECK_MODULES(AMLPLAYER, libamcodec)
 	PKG_CHECK_MODULES(DVBCSA, libdvbcsa)
 	ALSA_CFLAGS="-lasound"
 fi
@@ -466,6 +466,7 @@ lib/python/Plugins/SystemPlugins/DefaultServicesScanner/meta/Makefile
 lib/python/Plugins/SystemPlugins/DiseqcTester/Makefile
 lib/python/Plugins/SystemPlugins/DiseqcTester/meta/Makefile
 lib/python/Plugins/SystemPlugins/FastScan/Makefile
+lib/python/Plugins/SystemPlugins/FastZapSupport/Makefile
 lib/python/Plugins/SystemPlugins/FrontprocessorUpgrade/Makefile
 lib/python/Plugins/SystemPlugins/FrontprocessorUpgrade/meta/Makefile
 lib/python/Plugins/SystemPlugins/HdmiCEC/Makefile
