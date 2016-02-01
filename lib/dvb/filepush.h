@@ -18,7 +18,7 @@ public:
 class eFilePushThread: public eThread, public Object
 {
 public:
-	eFilePushThread(int blocksize, size_t buffersize);
+	eFilePushThread(int blocksize=188, size_t buffersize=188*1024);
 	~eFilePushThread();
 	void thread();
 	void stop();
