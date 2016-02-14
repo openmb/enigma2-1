@@ -116,6 +116,8 @@ eDVBResourceManager::eDVBResourceManager()
 
 	if (!strncmp(tmp, "wetekplay\n", rd))
 		m_boxtype = WETEKPLAY;
+	else if (!strncmp(tmp, "wetekplayplus\n", rd))
+		m_boxtype = WETEKPLAYPLUS;
 	else {
 		eDebug("[eDVBResourceManager] cannot open /proc/stb/info. Use fallback via demux count!");
 		if (m_demux.size() == 3)

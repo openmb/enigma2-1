@@ -86,7 +86,7 @@ class AVSwitch:
 	# 	del modes["DVI-PC"]
 	
 	# Machines that do not have component video (red, green and blue RCA sockets).
-	if modes.has_key("YPbPr") and getBoxType() in ('wetekplay', 'dm500hdv2','dm500hd','dm800','e3hd','ebox7358','eboxlumi','ebox5100','enfinity','et4x00','iqonios300hd','ixusszero','odimm7','optimussos1','tm2t','tmnano','tmnano2super','tmnano3t','tmnanose','tmnanosecombo','tmsingle','optimussos1','uniboxhd1','vusolo2','vusolo4k','xp1000'):
+	if modes.has_key("YPbPr") and getBoxType() in ('wetekplay', 'wetekplayplus', 'dm500hdv2','dm500hd','dm800','e3hd','ebox7358','eboxlumi','ebox5100','enfinity','et4x00','iqonios300hd','ixusszero','odimm7','optimussos1','tm2t','tmnano','tmnano2super','tmnano3t','tmnanose','tmnanosecombo','tmsingle','optimussos1','uniboxhd1','vusolo2','vusolo4k','xp1000'):
 		del modes["YPbPr"]
 		
 	# Machines that have composite video (yellow RCA socket) but do not have Scart.
@@ -95,7 +95,7 @@ class AVSwitch:
 		del modes["Scart"]
 		
 	# Machines that have neither RCA nor Scart sockets 
-	if modes.has_key("Scart") and getBoxType() in ('wetekplay', 'et5x00','et6x00','gbquad','ixussone','tmnano2t','tmnanose','vusolo4k'):
+	if modes.has_key("Scart") and getBoxType() in ('wetekplay', 'wetekplayplus', 'et5x00','et6x00','gbquad','ixussone','tmnano2t','tmnanose','vusolo4k'):
 		del modes["Scart"]
 
 	def __init__(self):
