@@ -302,7 +302,7 @@ public:
 			add(filename);
 			++i;
 		}
-		eDebug("Found %d input devices.", i);
+		eDebug("[eInputDevice] Found %d input devices.", i);
 	}
 
 	void removeAll(void)
