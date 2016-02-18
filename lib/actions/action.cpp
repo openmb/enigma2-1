@@ -42,7 +42,7 @@ RESULT eActionMap::getInstance(ePtr<eActionMap> &ptr)
 	return 0;
 }
 
-void eActionMap::bindAction(const std::string &context, int priority, int id, eWidget *widget)
+void eActionMap::bindAction(const std::string &context, long long int priority, int id, eWidget *widget)
 {
 	eActionBinding bnd;
 
@@ -50,10 +50,10 @@ void eActionMap::bindAction(const std::string &context, int priority, int id, eW
 	bnd.m_context = context;
 	bnd.m_widget = widget;
 	bnd.m_id = id;
-	m_bindings.insert(std::pair<int,eActionBinding>(priority, bnd));
+	m_bindings.insert(std::pair<long long int,eActionBinding>(priority, bnd));
 }
 
-void eActionMap::bindAction(const std::string &context, int priority, ePyObject function)
+void eActionMap::bindAction(const std::string &context, long long int priority, ePyObject function)
 {
 	eActionBinding bnd;
 
@@ -62,13 +62,14 @@ void eActionMap::bindAction(const std::string &context, int priority, ePyObject 
 	bnd.m_widget = 0;
 	Py_INCREF(function);
 	bnd.m_fnc = function;
-	m_bindings.insert(std::pair<int,eActionBinding>(priority, bnd));
+	m_bindings.insert(std::pair<long long int,eActionBinding>(priority, bnd));
 }
 
 void eActionMap::unbindAction(eWidget *widget, int id)
 {
-	for (std::multimap<int, eActionBinding>::iterator i(m_bindings.begin()); i != m_bindings.end(); ++i)
-		if ((i->second.m_widget == widget) && (i->second.m_id == id))
+	//eDebug("[eActionMap] unbind widget id=%d", id);
+	for (std::multimap<long long int, eActionBinding>::iterator i(m_bindings.begin()); i != m_bindings.end(); ++i)
+		if (i->second.m_widget == widget && i->second.m_id == id)
 		{
 			m_bindings.erase(i);
 			return;
@@ -77,8 +78,8 @@ void eActionMap::unbindAction(eWidget *widget, int id)
 
 void eActionMap::unbindAction(const std::string &context, ePyObject function)
 {
-	for (std::multimap<int, eActionBinding>::iterator i(m_bindings.begin()); i != m_bindings.end(); ++i)
-	{
+	//eDebug("[eActionMap] unbind function from %s", context.c_str());
+	for (std::multimap<long long int, eActionBinding>::iterator i(m_bindings.begin()); i != m_bindings.end(); ++i)
 		if (i->second.m_fnc && (PyObject_Compare(i->second.m_fnc, function) == 0))
 		{
 			Py_DECREF(i->second.m_fnc);
@@ -165,9 +166,8 @@ void eActionMap::keyPressed(const std::string &device, int key, int flags)
 	//eDebug("[eActionMap] key from %s: %d %d", device.c_str(), key, flags);
 	std::list<call_entry> call_list;
 
-		/* iterate active contexts. */
-	for (std::multimap<long long int,eActionBinding>::iterator c(m_bindings.begin());
-		c != m_bindings.end(); ++c)
+	// iterate active contexts
+	for (std::multimap<long long int,eActionBinding>::iterator c(m_bindings.begin()); c != m_bindings.end(); ++c)
 	{
 		if (flags == eRCKey::flagMake)
 			c->second.m_prev_seen_make_key = key;
