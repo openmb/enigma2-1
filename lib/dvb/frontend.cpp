@@ -641,7 +641,7 @@ int eDVBFrontend::closeFrontend(bool force, bool no_delayed)
 {
 	bool isLinked = false;
 	bool isUnicable = m_data[SATCR] != -1;
-	eDebugNoSimulate("try to close frontend %d", m_dvbid);
+	eDebugNoSimulate("[eDVBFrontend] try to close frontend %d", m_dvbid);
 
 	eDVBFrontend *sec_fe = this;
 
@@ -701,7 +701,7 @@ int eDVBFrontend::closeFrontend(bool force, bool no_delayed)
 		eDVBRegisteredFrontend *linked_fe = (eDVBRegisteredFrontend*)tmp;
 		if (linked_fe->m_inuse)
 		{
-			eDebugNoSimulate("dont close frontend %d until the linked frontend %d in slot %d is still in use",
+			eDebugNoSimulate("[eDVBFrontend] dont close frontend %d until the linked frontend %d in slot %d is still in use",
 				m_dvbid, linked_fe->m_frontend->getDVBID(), linked_fe->m_frontend->getSlotID());
 			m_sn->stop();
 			m_state = stateIdle;
@@ -1529,7 +1529,7 @@ int eDVBFrontend::tuneLoopInt()  // called by m_tuneTimer
 						delay = duration_est - duration;
 					if (delay > 24) delay = 24;
 					if (delay)
-						eDebugNoNewLine(" -> extra quard delay %d ms\n",delay);
+						eDebugNoNewLine("[eDVBFrontend] -> extra quard delay %d ms\n",delay);
 				}
 				++m_sec_sequence.current();
 				break;
@@ -1647,14 +1647,14 @@ int eDVBFrontend::tuneLoopInt()  // called by m_tuneTimer
 				{
 					if (readFrontendData(iFrontendInformation_ENUMS::lockState))
 					{
-						eDebugNoSimulate("tuner locked .. wait");
+						eDebugNoSimulate("[eDVBFrontend] tuner locked .. wait");
 						if (m_timeoutCount)
 							m_timeoutCount--;
 						++m_sec_sequence.current();
 					}
 					else
 					{
-						eDebugNoSimulate("tuner unlocked .. goto %d", m_sec_sequence.current()->steps);
+						eDebugNoSimulate("[eDVBFrontend] tuner unlocked .. goto %d", m_sec_sequence.current()->steps);
 						setSecSequencePos(m_sec_sequence.current()->steps);
 					}
 				}
@@ -2875,10 +2875,10 @@ eDVBRegisteredFrontend *eDVBFrontend::getLast(eDVBRegisteredFrontend *fe)
 
 bool eDVBFrontend::is_multistream()
 {
-#if defined FE_CAN_MULTISTREAM
+#if DVB_API_VERSION > 5 || DVB_API_VERSION == 5 && DVB_API_VERSION_MINOR >= 8
 	return fe_info.caps & FE_CAN_MULTISTREAM;
-#else
-	return false;
+#else //if DVB_API_VERSION < 5
+	return 0;
 #endif
 }
 
@@ -2911,7 +2911,7 @@ std::string eDVBFrontend::getCapabilities()
 	if (fe_info.caps &  FE_CAN_8VSB)			ss << "FE_CAN_8VSB" << std::endl;
 	if (fe_info.caps &  FE_CAN_16VSB)			ss << "FE_CAN_16VSB" << std::endl;
 	if (fe_info.caps &  FE_HAS_EXTENDED_CAPS)		ss << "FE_HAS_EXTENDED_CAPS" << std::endl;
-#if defined FE_CAN_MULTISTREAM
+#if DVB_API_VERSION > 5 || DVB_API_VERSION == 5 && DVB_API_VERSION_MINOR >= 8
 	if (fe_info.caps &  FE_CAN_MULTISTREAM)			ss << "FE_CAN_MULTISTREAM" << std::endl;
 #endif
 	if (fe_info.caps &  FE_CAN_TURBO_FEC)			ss << "FE_CAN_TURBO_FEC" << std::endl;
