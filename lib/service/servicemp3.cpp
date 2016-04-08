@@ -21,6 +21,8 @@
 #include <gst/pbutils/missing-plugins.h>
 #include <sys/stat.h>
 
+#include <time.h>
+
 #define HTTP_TIMEOUT 30
 
 /*
@@ -1058,7 +1060,7 @@ gint eServiceMP3::match_sinktype(const GValue *velement, const gchar *type)
 }
 #endif
 
-#if WETEKRC
+#if HAVE_AMLOGIC or WETEKRC
 GstElement *getVideoDecElement(GstElement *m_gst_playbin, int i)
 {
 	GstPad *pad = NULL;
@@ -1109,6 +1111,11 @@ GstElement * getAudioDecElement(GstElement *m_gst_playbin, int i)
 		
 	return e;
 } 
+		eDebug("[eServiceMP3] no %sDecElement", flag ? "Video" : "Audio");
+
+	return e;
+}
+
 void eServiceMP3::AmlSwitchAudio(int index)
 {
 	gint i, n_audio = 0;
@@ -1160,16 +1167,16 @@ RESULT eServiceMP3::getPlayPosition(pts_t &pts)
 	if (!m_gst_playbin || m_state != stRunning)
 		return -1;
 
-#if WETEKRC
-	if ( (pos = get_pts_pcrscr()) > 0)
-		pos *= 11111LL;	
+#if HAVE_AMLOGIC or WETEKRC
+	if ((pos = get_pts_pcrscr()) > 0)
+		pos *= 11111LL;
 #else
 	if (audioSink || videoSink)
 	{
 		g_signal_emit_by_name(audioSink ? audioSink : videoSink, "get-decoder-time", &pos);
 		if (!GST_CLOCK_TIME_IS_VALID(pos)) return -1;
 	}
-#endif	
+#endif
 	else
 	{
 		GstFormat fmt = GST_FORMAT_TIME;
@@ -1620,7 +1627,7 @@ int eServiceMP3::selectAudioStream(int i)
 {
 	int current_audio;
 	g_object_set (G_OBJECT (m_gst_playbin), "current-audio", i, NULL);
-#if WETEKRC	
+#if HAVE_AMLOGIC or WETEKRC	
 	if (m_currentAudioStream != i)
 		AmlSwitchAudio(i);
 #endif
