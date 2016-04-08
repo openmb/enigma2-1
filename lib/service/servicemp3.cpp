@@ -21,8 +21,6 @@
 #include <gst/pbutils/missing-plugins.h>
 #include <sys/stat.h>
 
-#include <time.h>
-
 #define HTTP_TIMEOUT 30
 
 /*
@@ -1060,7 +1058,7 @@ gint eServiceMP3::match_sinktype(const GValue *velement, const gchar *type)
 }
 #endif
 
-#if HAVE_AMLOGIC or WETEKRC
+#if  WETEKRC
 GstElement *getVideoDecElement(GstElement *m_gst_playbin, int i)
 {
 	GstPad *pad = NULL;
@@ -1159,6 +1157,78 @@ unsigned int eServiceMP3::get_pts_pcrscr(void)
 	return value;
 }
 #endif
+
+#if HAVE_AMLOGIC
+GstElement *getAVDecElement(GstElement *m_gst_playbin, int i, int flag)
+{
+	GstPad *pad = NULL;
+	GstPad *dec_pad = NULL;
+	GstElement *e = NULL;
+
+	g_signal_emit_by_name(m_gst_playbin, flag ? "get-video-pad" : "get-audio-pad", i, &pad);
+	if (pad) {
+		dec_pad = gst_pad_get_peer(pad);
+		while (dec_pad && GST_IS_GHOST_PAD(dec_pad)) {
+			gst_object_unref(dec_pad);
+			dec_pad = gst_ghost_pad_get_target(GST_GHOST_PAD(dec_pad));
+		}
+		if (dec_pad) {
+			e = gst_pad_get_parent_element(dec_pad);
+			gst_object_unref(dec_pad);
+		}
+		gst_object_unref(pad);
+	}
+
+	if (!e)
+		eDebug("[eServiceMP3] no %sDecElement", flag ? "Video" : "Audio");
+
+	return e;
+}
+
+void eServiceMP3::AmlSwitchAudio(int index)
+{
+	gint i, n_audio = 0;
+	gint32 videonum = 0;
+	GstElement * adec = NULL, *vdec = NULL;
+
+	g_object_get(G_OBJECT (m_gst_playbin), "n-audio", &n_audio, NULL);
+	for (i = 0; i < n_audio; i++) {
+		adec = getAVDecElement(m_gst_playbin, i, 0);
+		if (adec) {
+			g_object_set(G_OBJECT(adec), "pass-through", TRUE, NULL);
+			gst_object_unref(adec);
+		}
+	}
+	adec = getAVDecElement(m_gst_playbin, index, 0);
+	if (adec) {
+		g_object_set(G_OBJECT(adec), "pass-through", FALSE, NULL);
+		gst_object_unref(adec);
+	}
+	g_object_get(G_OBJECT (m_gst_playbin), "current-video", &videonum, NULL);
+	vdec = getAVDecElement(m_gst_playbin, videonum, 1);
+	if (vdec)
+		g_object_set(G_OBJECT(vdec), "pass-through", TRUE, NULL);
+}
+
+unsigned int eServiceMP3::get_pts_pcrscr(void)
+{
+	int handle;
+	int size;
+	char s[16];
+	unsigned int value = 0;
+
+	handle = open("/sys/class/tsync/pts_pcrscr", O_RDONLY);
+	if (handle < 0)
+		return value;
+
+	size = read(handle, s, sizeof(s));
+	if (size > 0)
+		value = strtoul(s, NULL, 16);
+	close(handle);
+	return value;
+}
+#endif
+
 RESULT eServiceMP3::getPlayPosition(pts_t &pts)
 {
 	gint64 pos;
