@@ -1058,7 +1058,7 @@ gint eServiceMP3::match_sinktype(const GValue *velement, const gchar *type)
 }
 #endif
 
-#if  WETEKRC
+#if WETEKRC
 GstElement *getVideoDecElement(GstElement *m_gst_playbin, int i)
 {
 	GstPad *pad = NULL;
@@ -1109,11 +1109,6 @@ GstElement * getAudioDecElement(GstElement *m_gst_playbin, int i)
 		
 	return e;
 } 
-		eDebug("[eServiceMP3] no %sDecElement", flag ? "Video" : "Audio");
-
-	return e;
-}
-
 void eServiceMP3::AmlSwitchAudio(int index)
 {
 	gint i, n_audio = 0;
@@ -1157,7 +1152,6 @@ unsigned int eServiceMP3::get_pts_pcrscr(void)
 	return value;
 }
 #endif
-
 #if HAVE_AMLOGIC
 GstElement *getAVDecElement(GstElement *m_gst_playbin, int i, int flag)
 {
@@ -1228,7 +1222,6 @@ unsigned int eServiceMP3::get_pts_pcrscr(void)
 	return value;
 }
 #endif
-
 RESULT eServiceMP3::getPlayPosition(pts_t &pts)
 {
 	gint64 pos;
