@@ -14,6 +14,8 @@ from os import system, listdir, remove as os_remove
 from enigma import iServiceInformation, eTimer
 import socket
 
+from boxbranding import getBoxType, getMachineBrand, getMachineName, getImageVersion, getImageType, getImageBuild, getDriverDate, getImageDevBuild
+
 from xml.dom import Node
 from xml.dom import minidom
 from Screens.Console import Console
@@ -75,6 +77,14 @@ class DeliteBluePanel(Screen):
 		self.populate_List()
 		self["list"] = MenuList(self.emlist)
 		self["lab1"].setText(_("%d  CAMs Installed") % (len(self.emlist)))
+		
+		self.timer = eTimer()
+		self.timer.callback.append(self.downloadxmlpage)
+		self.timer.start(100, 1)
+		self.addon = 'emu'
+		self.icount = 0
+		self.downloading = False
+		
 		self.onShow.append(self.updateBP)
 
 	def populate_List(self):
@@ -352,20 +362,7 @@ class BhsysInfo(Screen):
 		rc = system("df -h > /tmp/syinfo.tmp")
 		text = _("BOX\n") + _("Brand:") + "\tMiraclebox\n"
 	
-		hwname = "Unknown"
-		if about.getHardwareTypeString() == "ini-8000sv":
-		    hwname = "MB Premium Ultra HD"
-		elif about.getHardwareTypeString() == "ini-5000sv":
-		    hwname = "MB Premium Twin HD"
-		elif about.getHardwareTypeString() == "ini-2000sv":
-		    hwname = "MB Premium Mini+ PLUS HD"
-		elif about.getHardwareTypeString() == "ini-1000sv":
-		    hwname = "MB Premium Mini HD"
-		elif about.getHardwareTypeString().startswith("7000"):
-		    hwname = "MB Premium Micro HD"
-		elif about.getHardwareTypeString().startswith("g300"):
-		    hwname = "MB Premium Twin+ HD"
- 		text += _("Model:\t") + hwname +"\n"
+ 		text += _("Model:\t%s %s\n") % (getMachineBrand(), getMachineName())
 		f = open("/proc/stb/info/chipset",'r')
  		text += _("Chipset:\t") + f.readline() +"\n"
  		f.close()
