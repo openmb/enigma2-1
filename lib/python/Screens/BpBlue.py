@@ -200,7 +200,7 @@ class DeliteBluePanel(Screen):
 		
 	def downloadxmlpage(self):
 		from twisted.web.client import getPage
-		url = 'http://panel.vuplus-images.co.uk/addonslist1.6.xml'
+		url = 'http://panel.vuplus-images.co.uk/VuPlus-Images-Panel/Softcams.xml'
 		getPage(url).addCallback(self._gotPageLoad).addErrback(self.errorLoad)
 
 	def errorLoad(self, error):
@@ -231,7 +231,7 @@ class DeliteBluePanel(Screen):
 	def keyGreen(self):
 		if self.downloading == True:
 			try:
-				self.session.openWithCallback(self.populate_List, IpkgPackages, self.xmlparse, " Cams - BlackHole 2.x.x ")
+				self.session.openWithCallback(self.populate_List, IpkgPackages, self.xmlparse, "  Black Hole Softcams")
 			except:
 				self.close()
 		
