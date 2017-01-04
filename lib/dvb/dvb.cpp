@@ -101,16 +101,13 @@ eDVBResourceManager::eDVBResourceManager()
 		}
 		num_adapter++;
 	}
-	
+
 	if (eDVBAdapterLinux::exist(0))
 	{
 		eDVBAdapterLinux *adapter = new eDVBAdapterLinux(0);
 		adapter->scanDevices();
 		addAdapter(adapter, true);
 	}
-	
-	m_fbcmng = new eFBCTunerManager(instance);
-	m_sec = new eDVBSatelliteEquipmentControl(m_frontend, m_simulate_frontend);
 
 	m_boxtype = -1;
 	int fd = open("/proc/stb/info/model", O_RDONLY);
@@ -836,18 +833,6 @@ std::string eDVBResourceManager::getFrontendCapabilities(int index)
 		{
 			return i->m_frontend->getCapabilities();
 		}
-	}
-	return "";
-}
-
-std::string eDVBResourceManager::getFrontendDeliverySystem(int index)
-{
-	for (eSmartPtrList<eDVBRegisteredFrontend>::iterator i(m_frontend.begin()); i != m_frontend.end(); ++i)
-	{
-		if (i->m_frontend->getSlotID() == index)
-			{
-				return i->m_frontend->getDeliverySystem();
-			}
 	}
 	return "";
 }
@@ -1604,45 +1589,42 @@ void eDVBChannel::frontendStateChanged(iDVBFrontend*fe)
 	if (fe->getState(state))
 		return;
 
-	int tuner_id = fe->getDVBID();
 	if (state == iDVBFrontend::stateLock)
 	{
-		eDebug("[eDVBChannel] OURSTATE: tuner %d ok", tuner_id);
+		eDebug("[eDVBChannel] OURSTATE: ok");
 		ourstate = state_ok;
 	} else if (state == iDVBFrontend::stateTuning)
 	{
-		eDebug("[eDVBChannel] OURSTATE: tuner %d tuning", tuner_id);
+		eDebug("[eDVBChannel] OURSTATE: tuning");
 		ourstate = state_tuning;
 	} else if (state == iDVBFrontend::stateLostLock)
 	{
 			/* on managed channels, we try to retune in order to re-acquire lock. */
-		fe->setData(eDVBFrontend::CUR_FREQ,0);
 		if (m_current_frontend_parameters)
 		{
-			eDebug("[eDVBChannel] OURSTATE: tuner %d lost lock, trying to retune", tuner_id);
+			eDebug("[eDVBChannel] OURSTATE: lost lock, trying to retune");
 			ourstate = state_tuning;
 			m_frontend->get().tune(*m_current_frontend_parameters);
 		} else
 			/* on unmanaged channels, we don't do this. the client will do this. */
 		{
-			eDebug("[eDVBChannel] OURSTATE: tuner %d lost lock, unavailable now.", tuner_id);
+			eDebug("[eDVBChannel] OURSTATE: lost lock, unavailable now.");
 			ourstate = state_unavailable;
 		}
 	} else if (state == iDVBFrontend::stateFailed)
 	{
 		ourstate = state_failed;
-		fe->setData(eDVBFrontend::CUR_FREQ,0);
 			/* on managed channels, we do a retry */
 		if (m_current_frontend_parameters)
 		{
-			eDebug("[eDVBChannel] OURSTATE: tuner %d failed, retune", tuner_id);
+			eDebug("[eDVBChannel] OURSTATE: failed, retune");
 			m_frontend->get().tune(*m_current_frontend_parameters);
 		} else
 		{ /* nothing we can do */
-			eDebug("[eDVBChannel] OURSTATE: tuner %d failed, fatal", tuner_id);
+			eDebug("[eDVBChannel] OURSTATE: failed, fatal");
 		}
 	} else
-		eFatal("[eDVBChannel] tuner %d state unknown", tuner_id);
+		eFatal("[eDVBChannel] state unknown");
 
 	if (ourstate != m_state)
 	{
