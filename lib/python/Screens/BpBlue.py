@@ -231,7 +231,10 @@ class DeliteBluePanel(Screen):
 	def keyGreen(self):
 		if self.downloading == True:
 			try:
-				self.session.openWithCallback(self.populate_List, IpkgPackages, self.xmlparse, "  Black Hole Softcams")
+				menu = "  Black Hole Softcams"
+				if getMachineName() == "SF4008":
+					menu = "  Softcams for 4K receivers"
+				self.session.openWithCallback(self.populate_List, IpkgPackages, self.xmlparse, menu)
 			except:
 				self.close()
 		
@@ -250,7 +253,7 @@ class IpkgPackages(Screen):
 		self.selection = selection
 		list = []
 		for plugins in self.xmlparse.getElementsByTagName('plugins'):
-			if str(plugins.getAttribute('cont').encode('utf8')) == self.selection:
+			if str(plugins.getAttribute('cont').encode('utf8')) in self.selection:
 				for plugin in plugins.getElementsByTagName('plugin'):
 					list.append(plugin.getAttribute('name').encode('utf8'))
 			continue
@@ -267,7 +270,7 @@ class IpkgPackages(Screen):
 		except:
 			return
 		for plugins in self.xmlparse.getElementsByTagName('plugins'):
-			if str(plugins.getAttribute('cont').encode('utf8')) == self.selection:
+			if str(plugins.getAttribute('cont').encode('utf8')) in self.selection:
 				for plugin in plugins.getElementsByTagName('plugin'):
 					if plugin.getAttribute('name').encode('utf8') == selection_country:
 						urlserver = str(plugin.getElementsByTagName('url')[0].childNodes[0].data)
@@ -360,9 +363,9 @@ class BhsysInfo(Screen):
 		
 	def updateInfo(self):
 		rc = system("df -h > /tmp/syinfo.tmp")
-		text = _("BOX\n") + _("Brand:") + "\tMiraclebox\n"
+		text = _("BOX\n") + _("Brand:\t%s\n") % (getMachineBrand())
 	
- 		text += _("Model:\t%s %s\n") % (getMachineBrand(), getMachineName())
+ 		text += _("Model:\t%s\n") % (getMachineName())
 		f = open("/proc/stb/info/chipset",'r')
  		text += _("Chipset:\t") + f.readline() +"\n"
  		f.close()
